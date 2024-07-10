@@ -6,6 +6,11 @@ from waitress import serve
 app = Flask(__name__)
 CORS(app)  # Allow Cross-Origin Resource Sharing
 
+# Define or import the custom tokenizer here
+def custom_tokenizer(text):
+    # Your custom tokenizer implementation
+    pass
+
 # Load the best model
 model = joblib.load('SSTI.pkl')
 
@@ -16,7 +21,7 @@ def predict_ssti(sentences):
 def check_note():
     note = request.json.get('note')
 
-    # Predict S for the note
+    # Predict SSTI for the note
     prediction_ssti = predict_ssti(note)
 
     response = {
