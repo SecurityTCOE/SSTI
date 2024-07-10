@@ -4,7 +4,7 @@ import joblib
 from waitress import serve
 
 # Import your custom tokenizer
-from your_module import custom_tokenizer
+from utils import custom_tokenizer
 
 app = Flask(__name__)
 CORS(app)  # Allow Cross-Origin Resource Sharing
@@ -22,7 +22,7 @@ def predict_ssti(sentences):
 def check_note():
     note = request.json.get('note')
 
-    # Predict S for the note
+    # Predict SSTI for the note
     prediction_ssti = predict_ssti(note)
 
     response = {
