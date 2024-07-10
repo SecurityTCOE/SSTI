@@ -3,16 +3,17 @@ from flask_cors import CORS
 import joblib
 from waitress import serve
 
+# Import your custom tokenizer
+from your_module import custom_tokenizer
+
 app = Flask(__name__)
 CORS(app)  # Allow Cross-Origin Resource Sharing
 
-# Define or import the custom tokenizer here
-def custom_tokenizer(text):
-    # Your custom tokenizer implementation
-    pass
+# Define a custom globals dictionary
+custom_globals = {'custom_tokenizer': custom_tokenizer}
 
-# Load the best model
-model = joblib.load('SSTI.pkl')
+# Load the best model with custom globals
+model = joblib.load('SSTI.pkl', globals=custom_globals)
 
 def predict_ssti(sentences):
     return model.predict(sentences)[0]
@@ -21,7 +22,7 @@ def predict_ssti(sentences):
 def check_note():
     note = request.json.get('note')
 
-    # Predict SSTI for the note
+    # Predict S for the note
     prediction_ssti = predict_ssti(note)
 
     response = {
