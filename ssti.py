@@ -2,42 +2,31 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import joblib
 from waitress import serve
-from utils import custom_tokenizer
+from utils import custom_tokenizer  # Assuming custom_tokenizer is defined in utils.py
 
 app = Flask(__name__)
 CORS(app)  # Allow Cross-Origin Resource Sharing
 
-# Load the best model (without passing globals)
-model = joblib.load('SSTI.pkl')
+# Load the best model with the custom tokenizer available
+model = joblib.load('SSTI.pkl', mmap_mode=None, custom_objects={"custom_tokenizer": custom_tokenizer})
 
-def predict_ssti(sentence):
-    # Ensure the input is a list of strings even for a single sentence
-    return model.predict([sentence])[0]
+def predict_ssti(sentences):
+    return model.predict(sentences)[0]
 
 @app.route('/note', methods=['POST'])
 def check_note():
-    data = request.get_json(force=True)
-    notes = data.get('note')
+    note = request.json.get('note')
 
-    if not isinstance(notes, list):
-        return jsonify({
-            "error": "Invalid input",
-            "message": "Expected 'note' to be a list of strings"
-        }), 400
-
-    # Predict SSTI for each note
-    predictions = [predict_ssti(note) for note in notes]
+    # Predict S for the note
+    prediction_ssti = predict_ssti(note)
 
     response = {
-        "results": [
-            {
-                "note": note,
-                "is_ssti": bool(pred),
-                "message": "SSTI detected in note" if pred else "No injection detected"
-            } for note, pred in zip(notes, predictions)
-        ]
+        "is_ssti": bool(prediction_ssti),
+        "message": "No injection detected"
     }
 
+    if response["is_ssti"]:
+        response["message"] = "SSTI detected in note"
     return jsonify(response)
 
 if __name__ == '__main__':
