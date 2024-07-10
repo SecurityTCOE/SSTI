@@ -20,8 +20,9 @@ model = load_model()
 if model is None:
     exit(1)
 
-def predict_ssti(sentences):
-    return model.predict(sentences)[0]
+def predict_ssti(sentence):
+    # Ensure the input is wrapped in a list
+    return model.predict([sentence])[0]
 
 @app.route('/note', methods=['POST'])
 def check_note():
