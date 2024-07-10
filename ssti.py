@@ -7,8 +7,18 @@ from utils import custom_tokenizer  # Assuming custom_tokenizer is defined in ut
 app = Flask(__name__)
 CORS(app)  # Allow Cross-Origin Resource Sharing
 
-# Load the best model with the custom tokenizer available
-model = joblib.load('SSTI.pkl', mmap_mode=None, custom_objects={"custom_tokenizer": custom_tokenizer})
+# Load the best model
+def load_model():
+    try:
+        return joblib.load('SSTI.pkl')
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        return None
+
+model = load_model()
+
+if model is None:
+    exit(1)
 
 def predict_ssti(sentences):
     return model.predict(sentences)[0]
