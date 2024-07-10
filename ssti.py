@@ -9,11 +9,8 @@ from utils import custom_tokenizer
 app = Flask(__name__)
 CORS(app)  # Allow Cross-Origin Resource Sharing
 
-# Define a custom globals dictionary
-custom_globals = {'custom_tokenizer': custom_tokenizer}
-
-# Load the best model with custom globals
-model = joblib.load('SSTI.pkl', globals=custom_globals)
+# Load the best model (without passing globals)
+model = joblib.load('SSTI.pkl')
 
 def predict_ssti(sentences):
     return model.predict(sentences)[0]
